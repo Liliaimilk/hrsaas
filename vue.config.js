@@ -31,10 +31,17 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: true,
+    // open: true,
     overlay: {
       warnings: false,
       errors: true
+    },
+    // 代理配置
+    proxy: {
+      '/api': {
+        target: 'http://ihrm-java.itheima.net/',
+        changeOrigin: true
+      }
     }
     // before: require('./mock/mock-server.js')
   },
