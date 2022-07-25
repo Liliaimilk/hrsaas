@@ -1,7 +1,10 @@
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login } from '@/api/user'
+import { getToken, setToken, removeToken, getTimeStamp } from '@/utils/auth'
+import { login, getInfo, getallUser } from '@/api/user'
+// import store from '@/store'
 const state = {
-  token: getToken()
+  token: getToken(),
+  // 为什么声明对象，不声明null
+  userInfo: {}
 }
 
 const mutations = {
@@ -12,7 +15,14 @@ const mutations = {
   removeToken(state) {
     state.token = null // 删除vuex的token
     removeToken() // 先清除 vuex  再清除缓存 vuex和 缓存数据的同步
+  },
+  removeUserInfo(state) {
+    state.userInfo = {}
+  },
+  getInfo(state, results) {
+    state.userInfo = results
   }
+
 }
 
 const actions = {
@@ -20,6 +30,23 @@ const actions = {
     const results = await login(data)
     console.log(results, '22')
     context.commit('setToken', results)
+  },
+  // 获取用户信息
+  async getInfo(context) {
+    // context.commit('removeToken')
+    const results = await getInfo()
+    // 因为要传入id所以要在获取id之后调用
+    const msg = await getallUser(results.userId)
+    // 合并对象
+    // const obj = { ...msg, ...results }
+    context.commit('getInfo', { ...msg, ...results })
+  },
+  // 退出登录
+  logout(context) {
+    context.commit('removeToken')
+    context.commit('removeUserInfo')
+    // 重新注入时间戳
+    getTimeStamp()
   }
 
 }
