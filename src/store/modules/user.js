@@ -26,6 +26,7 @@ const mutations = {
 }
 
 const actions = {
+  // 获取token
   async login(context, data) {
     const results = await login(data)
     console.log(results, '22')

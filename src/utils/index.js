@@ -115,3 +115,28 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+// 转换树形结构 递归
+export function createTreeList(list, rootValue) {
+  var arr = []
+  list.forEach(item => {
+    // 因此当前要转换的树形结构规律是根节点是pid为空，id为正常数值，而它的子节点
+    // 的pid等于根节点的id，以此往下类推
+
+    // 所以当前递归方法，先由外接传入数组和根节点的pid，遍历数组先找出根节点
+    if (item.pid === rootValue) {
+      // 当找到其中的根节点时，再递归调用方法，传入数组和当前根节点的id，遍历寻找子节点也就是pid等于当前根节点id的节点
+      const children = createTreeList(list, item.id)
+      // 当前节点有子节点时将子节点赋值给自己的children
+      if (children.length) {
+        item.children = children
+      }
+      // push执行的次数是数据显示的总条数，也就是树的节点数
+      arr.push(item)
+      // console.log('135')
+    }
+  })
+  // 当遍历后没有子节点时会直接return arr跳出当前节点的方法，回到上一遍历节点也就是父节点
+  // 然后因子节点的return可知子节点已没有子节点，因此直接执行递归方法的下面代码
+  return arr
+}
