@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-dialog :visible="showDialog" title="增加员工" width="50%">
-      <el-form :model="formData" :rules="rules" label-width="120px">
+    <el-dialog :visible="showDialog" title="增加员工" width="50%" @close="btnCancel">
+      <el-form ref="formData" :model="formData" :rules="rules" label-width="120px">
         <el-form-item label="姓名" prop="username">
           <el-input v-model="formData.username" />
         </el-form-item>
@@ -29,8 +29,9 @@
           <el-input v-model="formData.workNumber" />
         </el-form-item>
         <el-form-item label="部门" prop="departmentName">
-          <el-tree v-if="showTree" :data="depts" :props="{ label: 'name' }" @node-click="selectNode" />
           <el-input v-model="formData.departmentName" placeholder="请选择" @focus="getDepartInfo" />
+
+          <el-tree v-if="showTree" :data="depts" :props="{ label: 'name' }" @node-click="selectNode" />
         </el-form-item>
         <el-form-item label="转正时间" prop="correctionTime">
           <el-date-picker
@@ -43,7 +44,7 @@
       <div slot="footer">
         <el-row type="flex" justify="center">
 
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button @click="btnCancel">取 消</el-button>
           <el-button type="primary" @click="addEmployee">确 定</el-button>
         </el-row>
       </div>
@@ -104,9 +105,19 @@ export default {
     }
   },
   methods: {
+    // 确定添加
     async addEmployee() {
-      await addEmployee(this.formData)
+      try {
+        await this.$refs.formData.validate()
+        await addEmployee(this.formData)
+        this.$emit('update:showDialog', false)
+        this.$parent.getDepartInfo()
+      } catch (error) {
+        console.log(error)
+      }
     },
+
+    // 部门树形结构
     async getDepartInfo() {
       this.loading = true
       this.showTree = true
@@ -114,10 +125,26 @@ export default {
       this.depts = createTreeList(depts, '')
       this.loading = false
     },
+
+    // 点击树形节点渲染input
     selectNode(node) {
       // console.log(node)
       this.formData.departmentName = node.name
       this.showTree = false
+    },
+    // 取消
+    btnCancel() {
+      this.formData = {
+        username: '',
+        mobile: '',
+        formOfEmployment: '',
+        workNumber: '',
+        departmentName: '',
+        timeOfEntry: '',
+        correctionTime: ''
+      }
+      this.$refs.formData.resetFields()
+      this.$emit('update:showDialog', false)
     }
   }
 }
