@@ -34,11 +34,11 @@ service.interceptors.response.use(response => {
   const { data, success, message } = response.data
   if (success) {
     // console.log(this.success)
-    console.log(data, 'token')
+    // console.log(data, 'token')
     return data
   } else {
     Message.error(message)// 提示错误信息
-    console.log('21')
+    // console.log('21')
     return Promise.reject(new Error(message))
   }
 }, error => { // 失败

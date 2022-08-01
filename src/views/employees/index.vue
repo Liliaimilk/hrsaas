@@ -2,17 +2,18 @@
   <div class="dashboard-container">
     <div class="app-container">
       <PageTools :show-before="true">
-        <span slot="before">我真的好想你</span>
+        <span slot="before">我想你{{ total }}遍</span>
         <template v-slot:after>
           <el-button size="small" type="primary" @click="show=true">新增员工</el-button>
           <el-button size="small" type="warning" @click="$router.push({path:'/import'})">导入</el-button>
-          <el-button size="small" type="danger">导出</el-button>
+          <el-button size="small" type="danger" @click="exportData">导出</el-button>
         </template>
       </PageTools>
       <el-card>
         <el-table border :data="list">
           <el-table-column label="序号" sortable="" type="index" />
           <el-table-column label="姓名" sortable="" prop="username" />
+          <el-table-column label="手机号" sortable="" prop="mobile" />
           <el-table-column label="工号" sortable="" prop="workNumber" />
           <el-table-column label="聘用形式" sortable="" prop="formOfEmployment" :formatter="formatterStatus" />
           <el-table-column label="部门" sortable="" prop="departmentName" />
@@ -30,9 +31,9 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="操作" sortable="" fixed="right" width="200px">
+          <el-table-column label="操作" sortable="" fixed="right" width="280px">
             <template v-slot="{row}">
-              <el-button type="text" size="small">查看</el-button>
+              <el-button type="text" size="small" @click="$router.push(`/employees/detail${row.id}`)">查看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
@@ -55,6 +56,7 @@
 <script>
 import { getemployeesInfo, delUser } from '@/api/employees'
 import employees from '@/api/constant/employees'
+import { formatDate } from '@/filters'
 import DialogAdd from './components/dialogAdd.vue'
 
 // import PageTools from '@/components/PageTools'
@@ -111,6 +113,61 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+
+    // excel导出
+    exportData() {
+      import('@/vendor/Export2Excel').then(async excel => {
+        const headers = {
+          '姓名': 'username',
+          '手机号': 'mobile',
+          '入职日期': 'timeOfEntry',
+          '聘用形式': 'formOfEmployment',
+          '转正日期': 'correctionTime',
+          '工号': 'workNumber',
+          '部门': 'departmentName'
+        }
+        // 一次获取全部的员工信息
+        const { rows } = await getemployeesInfo({ page: 1, size: this.total })
+        const data = this.formTion(headers, rows)
+        // 复杂表头
+        const multiHeader = [['姓名', '主要信息', '', '', '', '', '部门']]
+        // 合并表头
+        const merges = ['A1:A2', 'B1:F1', 'G1:G2']
+        // console.log(data, '132')
+        excel.export_json_to_excel({
+        // data里的一个数组表示header里的一行
+        //  header: ['姓名', '性别'], // 表头 必填
+        //  data: [['帅哥', 'shuage'], ['男']], // 具体数据 必填
+
+          header: Object.keys(headers), //  ['姓名'，'手机号'，'入职日期'....]
+          data,
+          filename: '员工资料表', // 非必填
+          autoWidth: true, // 非必填
+          bookType: 'xlsx',
+          multiHeader,
+          merges // 非必填
+        })
+      })
+    },
+    // 排列excel表头
+    // 将数组转化为二维数组
+    formTion(headers, rows) {
+      return rows.map(item => {
+        return Object.keys(headers).map(key => {
+          // 格式化时间
+          if (headers[key] === 'timeOfEntry' || headers[key] === 'correctionTime') {
+            return formatDate(item[headers[key]])
+            // 格式化聘用方式
+          } else if (headers[key] === 'formOfEmployment') {
+            var obj = employees.hireType.find(obj => obj.id === item[headers[key]])
+            console.log(obj, '155')
+            return obj ? obj.value : '未知'
+          }
+          // console.log(item[headers[key]])
+          return item[headers[key]]
+        })
+      })
     }
   }
 

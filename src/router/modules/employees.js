@@ -12,5 +12,13 @@ export default {
       title: '员工管理',
       icon: 'people'
     }
+  }, {
+    // 路由问题
+    path: '/employees/detail:id',
+    component: () => import('@/views/employees/detail'),
+    hidden: true,
+    meta: {
+      title: '用户详情'
+    }
   }]
 }
