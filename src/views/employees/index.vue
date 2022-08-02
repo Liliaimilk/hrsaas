@@ -148,6 +148,8 @@ export default {
           multiHeader,
           merges // 非必填
         })
+      }).catch(error => {
+        console.log(error)
       })
     },
     // 排列excel表头

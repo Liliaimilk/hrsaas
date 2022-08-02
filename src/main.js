@@ -13,6 +13,8 @@ import Components from '@/components' //global component
 import App from './App'
 import store from './store'
 import router from './router'
+// 打印
+import Print from 'vue-print-nb'
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -29,6 +31,8 @@ Object.keys(filter).forEach(key => {
   // 注册过滤器
   Vue.filter(key, filter[key])
 })
+
+Vue.use(Print)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
