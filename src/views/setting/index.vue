@@ -30,7 +30,7 @@
                 >
                   <template slot-scope="{row}">
                     <el-row justify="center" type="flex">
-                      <el-button type="text">分配权限</el-button>
+                      <el-button type="text" @click="managerKey(row.id)">分配权限</el-button>
                       <el-button type="text" @click="editInfo(row.id)">修改</el-button>
                       <el-button type="text" @click="delInfo(row.id)">删除</el-button>
                     </el-row>
@@ -104,21 +104,57 @@
           </el-tab-pane>
         </el-tabs>
 
+        <!-- 分配权限 -->
+        <el-dialog :visible="showRole" title="权限管理" @close="cancelBtn">
+          <!-- <el-form :model="formData">
+            <el-form-item>
+              <el-input />
+            </el-form-item>
+            <el-form-item>
+              <el-input />
+            </el-form-item>
+
+          </el-form> -->
+          <el-tree
+            ref="tree"
+            :data="data"
+            :props="defaultProps"
+            show-checkbox
+            check-strictly
+            default-expand-all
+            node-key="id"
+            :default-checked-keys="defaultSelect"
+          />
+          <el-row slot="footer" type="flex" justify="center">
+            <el-button type="primary" @click="saveRole">确定</el-button>
+            <el-button @click="cancelBtn">取消</el-button>
+          </el-row>
+        </el-dialog>
       </el-card>
     </div>
   </div>
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo, deleteRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, updateInfo, assignPerm } from '@/api/setting'
 import { mapGetters } from 'vuex'
 import PopDialog from './componts/Pop.vue'
+import { getPermissionList } from '@/api/permisson'
+import { createTreeList } from '@/utils'
 export default {
   components: {
     PopDialog
   },
   data() {
     return {
+      data: [],
+      roleId: '',
+      defaultSelect: [],
+      defaultProps: {
+        // 默认label:label 需改成要显示的key
+        label: 'name'
+      },
+      showRole: false,
       showDialog: false,
       PopData: [],
       list: [],
@@ -156,12 +192,12 @@ export default {
       })
       this.list = result.rows
       this.page.total = result.total
-      console.log(result)
+      // console.log(result)
     },
     // 获取公司信息
     async loadCompany() {
       this.formData = await getCompanyInfo(this.companyId)
-      console.log(this.formData)
+      // console.log(this.formData)
     },
 
     // 翻页更新
@@ -181,8 +217,29 @@ export default {
       await deleteRole(id)
       this.loadListInfo()
       this.$message.success('操作成功')
+    },
+    // 管理权限
+    async managerKey(id) {
+      this.roleId = id
+      this.data = createTreeList(await getPermissionList(id), '0')
+      this.showRole = true
+      // 获取权限点
+      const { permIds } = await updateInfo(id)
+      this.defaultSelect = permIds
+      // console.log(permIds)
+    },
+    // 保存
+    async saveRole() {
+      // this.$refs.tree.getCheckedKeys() 直接获取已经选中的key值
+      await assignPerm({ id: this.roleId, permIds: this.$refs.tree.getCheckedKeys() })
+      this.$message.success('分配权限成功')
+      this.showRole = false
+    },
+    // 取消
+    cancelBtn() {
+      this.data = []
+      this.showRole = false
     }
-
   }
 }
 </script>

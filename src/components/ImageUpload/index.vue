@@ -36,8 +36,8 @@ import QrCode from 'qrcode'
 import COS from 'cos-js-sdk-v5' // 引入腾讯云cos包
 // 实例化COS对像
 const cos = new COS({
-  SecretId: 'AKIDd2B3fmhLjpeCTTCepkiQs50e17wUllVy',
-  SecretKey: 'FDvMXR4RYOxHK6apmSrzrTpujIabMq30'
+  SecretId: 'AKIDd2B3fmhLjpeCTTCepkiQs50e17wUllVY',
+  SecretKey: 'FDvMXR4RYOxHK6apmSrzrTpujIabMq31'
 })
 export default {
 

@@ -37,8 +37,9 @@
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small">角色</el-button>
+              <el-button type="text" size="small" @click="editRole(row.id)">角色</el-button>
               <el-button type="text" size="small" @click="delUser(row.id)">删除</el-button>
+
             </template>
           </el-table-column>
         </el-table>
@@ -49,6 +50,8 @@
       </el-card>
       <!-- 新增成员 -->
       <dialog-add :show-dialog.sync="show" />
+      <!-- 角色 -->
+      <Role ref="Role" :show-dialog.sync="showRole" :user-id="userId" />
     </div>
   </div>
 </template>
@@ -57,17 +60,23 @@
 import { getemployeesInfo, delUser } from '@/api/employees'
 import employees from '@/api/constant/employees'
 import { formatDate } from '@/filters'
+// import { getUserDetailById } from '@/api/user'
+
 import DialogAdd from './components/dialogAdd.vue'
+import Role from './components/assign-role.vue'
 
 // import PageTools from '@/components/PageTools'
 
 export default {
   components: {
-    DialogAdd
+    DialogAdd,
+    Role
     // PageTools
   },
   data() {
     return {
+      userId: '',
+      showRole: false,
       show: false,
       loading: false,
       list: [],
@@ -170,6 +179,15 @@ export default {
           return item[headers[key]]
         })
       })
+    },
+    // 角色管理
+    async editRole(id) {
+      this.loading = true
+      this.userId = id
+      await this.$refs.Role.getUserDetailById(id)
+      // console.log(result, '185')
+      this.showRole = true
+      this.loading = false
     }
   }
 
