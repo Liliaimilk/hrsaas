@@ -20,6 +20,9 @@ import '@/icons' // icon
 import '@/permission' // permission control
 // 将所有导出的对象放入directives
 import * as directives from '@/directive'
+// 注册全局混入
+
+import checkButton from '@/mixin/checkButton'
 // 遍历所有的导出的指令对象 完成自定义全局注册
 // Object.keys() 把对象放进数组遍历
 Object.keys(directives).forEach(key => {
@@ -33,6 +36,9 @@ Object.keys(filter).forEach(key => {
 })
 
 Vue.use(Print)
+Vue.mixin(checkButton)
+
+// Vue.use()
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

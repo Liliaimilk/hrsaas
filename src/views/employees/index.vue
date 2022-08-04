@@ -4,7 +4,7 @@
       <PageTools :show-before="true">
         <span slot="before">我想你{{ total }}遍</span>
         <template v-slot:after>
-          <el-button size="small" type="primary" @click="show=true">新增员工</el-button>
+          <el-button v-if="checkButton('POINT-USER-ADD')" size="small" type="primary" @click="show=true">新增员工</el-button>
           <el-button size="small" type="warning" @click="$router.push({path:'/import'})">导入</el-button>
           <el-button size="small" type="danger" @click="exportData">导出</el-button>
         </template>
