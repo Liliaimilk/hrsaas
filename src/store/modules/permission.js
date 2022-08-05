@@ -10,6 +10,7 @@ const mutations = {
 const actions = {
   filterRoutes(context, menus) {
     const route = []
+    console.log(asyncRoutes, '13')
     // 用户存在id时，返回数据menus，menus为当前id能访问的路由页面,
     menus.forEach(key => {
       // 通过遍历过滤出当前id能显示的动态页面
