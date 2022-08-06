@@ -6,6 +6,7 @@
         <el-card class="header-card">
           <div>
             <div class="fl headL">
+              <!-- 全屏 -->
               <div class="headImg">
                 <img :imageerror="defaultImg" :src="avatar">
               </div>
@@ -134,6 +135,7 @@
                 <span>绩效指数</span>
               </div>
               <!-- 放置雷达图 -->
+              <radar />
             </el-card>
             <!-- 帮助连接 -->
             <el-card class="box-card">
@@ -173,8 +175,12 @@
 <script>
 // import excel from '@/components/UploadExcel'
 import { mapGetters } from 'vuex'
+import Radar from './components/radar.vue'
 export default {
   name: 'Dashboard',
+  components: {
+    Radar
+  },
   data() {
     return {
       defaultImg: '@/assets/common/head.jpg',
@@ -374,5 +380,11 @@ export default {
   align-items: center;
   justify-content: center;
   height: 50px;
+}
+.el-calendar-table td.is-today{
+  border-radius: 10px;
+  background-color: blue;
+  color: red;
+  opacity: 0.7;
 }
 </style>

@@ -8,6 +8,8 @@ export default {
   children: [{
     // path为空为默认的，表示该路由为当前二级路由的默认路由
     path: '',
+    name: 'attendances',
+
     component: () => import('@/views/attendances'),
     meta: {
       title: '考勤管理',

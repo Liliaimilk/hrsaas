@@ -7,6 +7,7 @@ export default {
   children: [{
     // path为空为默认的，表示该路由为当前二级路由的默认路由
     path: '',
+    name: 'social_securitys',
     component: () => import('@/views/social'),
     meta: {
       title: '社保',

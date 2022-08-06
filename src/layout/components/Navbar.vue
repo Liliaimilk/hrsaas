@@ -6,8 +6,10 @@
       <span class="breadBtn">体验版</span>
     </div>
     <!-- <breadcrumb class="breadcrumb-container" /> -->
-
     <div class="right-menu">
+      <lang class="right-menu-item" />
+      <ScreenFull class="right-menu-item" />
+
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img v-imageerror="defaultImg" :src="avatar" class="user-avatar">
@@ -130,7 +132,10 @@ export default {
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
+      vertical-align: middle;
+//       .right-menu-item {
+//    vertical-align: middle;
+// }
 
       &.hover-effect {
         cursor: pointer;
@@ -155,6 +160,7 @@ export default {
         //   height: 40px;
         //   border-radius: 10px;
         // }
+
         .user-avatar {
           cursor: pointer;
           width: 30px;
