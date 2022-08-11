@@ -91,7 +91,8 @@ export const constantRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
+  base: '/hr/', // 配置项目的基础地址
   scrollBehavior: () => ({ y: 0 }),
   // 路由合并
   routes: [...constantRoutes]
